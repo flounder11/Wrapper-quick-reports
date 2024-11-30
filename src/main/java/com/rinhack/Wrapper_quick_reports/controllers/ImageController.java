@@ -2,29 +2,34 @@ package com.rinhack.Wrapper_quick_reports.controllers;
 
 import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.rinhack.Wrapper_quick_reports.models.ImageRequest;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+
+
 @RestController
 @RequestMapping("/api/v1/images")
 public class ImageController {
-
+    @Value("${fastrep.app.apitok}")
+    private String apitok;
     @PostMapping(value = "/generate", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<byte[]> generateFiles(@RequestBody ImageRequest request) {
         if (request.getImages() == null || request.getImages().isEmpty()) {
@@ -167,10 +172,6 @@ public class ImageController {
 
         return baos.toByteArray();
     }
-
-
-
-
         private byte[] generateFrxFile(
                 List<String> base64Images,
                 int width,
@@ -295,5 +296,39 @@ public class ImageController {
             return null;
         }
     }
+
+
+    private void postToFastReportTemplates(String filename, String encodedContent) {
+            try {
+        // Создаем тело запроса
+        String requestBody = String.format("""
+                {
+                  "name": "%s",
+                  "content": "%s"
+                }
+            """,filename, encodedContent);
+
+        // Создаем HTTP клиент
+        HttpClient client = HttpClient.newHttpClient();
+
+        // Создаем HTTP запрос
+                java.net.http.HttpRequest request = java.net.http.HttpRequest.newBuilder()
+                .uri(URI.create("https://hygieia.fast-report.com/api/rp/v1/Templates/Folder/674986111d6ee7f62ddcd20e/File"))
+                .header("accept", "text/plain")
+                .header("Content-Type", "application/json-patch+json")
+                .header("Authorization", "Basic " + Base64.getEncoder().encodeToString(String.format("apikey:%s", apitok).getBytes()))
+                .POST(java.net.http.HttpRequest.BodyPublishers.ofString(requestBody))
+                .build();
+
+        // Отправляем запрос и получаем ответ
+        HttpResponse<String> response = client.send((java.net.http.HttpRequest) request, HttpResponse.BodyHandlers.ofString());
+
+        // Печатаем результат
+        System.out.println("Response status code: " + response.statusCode());
+        System.out.println("Response body: " + response.body());
+    } catch (Exception e) {
+        e.printStackTrace();
     }
+}
+}
 

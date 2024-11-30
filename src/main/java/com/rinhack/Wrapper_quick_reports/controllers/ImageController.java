@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
-
 @RestController
 @RequestMapping("/api/v1/images")
 public class ImageController {
@@ -80,27 +79,17 @@ public class ImageController {
 
         // Устанавливаем цвет фона
         graphics.setColor(Color.WHITE);
-        try{
-            graphics.fillRect(0, 0, width, height);
-        } catch (Exception e){
-            throw new IOException(e.getMessage());
-        }
-
+        graphics.fillRect(0, 0, width, height);
 
         // Размер одной ячейки
         int cellWidth = width / columns;
-        int cellHeight = cellWidth; // Условие для квадратных ячеек
+        int cellHeight = cellWidth; // Начальный размер ячейки (позже учитываем соотношение)
 
         int rows = height / cellHeight;
 
         // Устанавливаем цвет границ
-        Color borderColor = null;
-        try {
-            borderColor = Color.decode(borderColorHex);
-        }
-        catch (Exception e) {
-            throw new IOException(e);
-        }
+        Color borderColor = Color.decode(borderColorHex);
+
         // Заполнение холста узором
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < columns; col++) {
@@ -114,11 +103,25 @@ public class ImageController {
                 graphics.setColor(borderColor);
                 graphics.fillRect(x, y, cellWidth, cellHeight);
 
+                // Рассчитываем размеры изображения с учетом сохранения соотношения сторон
+                int originalWidth = img.getWidth();
+                int originalHeight = img.getHeight();
+                double aspectRatio = (double) originalWidth / originalHeight;
+
+                int imgWidth, imgHeight;
+                if (aspectRatio > 1) { // Широкое изображение
+                    imgWidth = cellWidth - 2 * borderThickness;
+                    imgHeight = (int) (imgWidth / aspectRatio);
+                } else { // Высокое изображение
+                    imgHeight = cellHeight - 2 * borderThickness;
+                    imgWidth = (int) (imgHeight * aspectRatio);
+                }
+
+                // Центрируем изображение внутри ячейки
+                int imgX = x + (cellWidth - imgWidth) / 2;
+                int imgY = y + (cellHeight - imgHeight) / 2;
+
                 // Рисуем изображение
-                int imgX = x + borderThickness;
-                int imgY = y + borderThickness;
-                int imgWidth = cellWidth - 2 * borderThickness;
-                int imgHeight = cellHeight - 2 * borderThickness;
                 graphics.drawImage(img, imgX, imgY, imgWidth, imgHeight, null);
             }
         }

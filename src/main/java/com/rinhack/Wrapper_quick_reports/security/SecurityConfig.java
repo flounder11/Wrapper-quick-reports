@@ -1,11 +1,12 @@
 package com.rinhack.Wrapper_quick_reports.security;
 
-import com.wndtback.services.UserService;
+import com.rinhack.Wrapper_quick_reports.services.UserService;
 import jakarta.servlet.Filter;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -29,17 +30,16 @@ import org.springframework.web.cors.CorsConfiguration;
 @EnableWebSecurity
 public class SecurityConfig {
     private UserService userService;
+    @Autowired
+    @Lazy
     private TokenFilter tokenFilter;
+
     public SecurityConfig(){
 
     }
     @Autowired
     public void setUserService(UserService userService) {
         this.userService = userService;
-    }
-    @Autowired
-    public void setTokenFilter(TokenFilter tokenFilter) {
-        this.tokenFilter = tokenFilter;
     }
     @Bean
     public PasswordEncoder passwordEncoder() {

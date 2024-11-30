@@ -17,9 +17,9 @@ import java.util.Date;
 @Component
 public class JwtCore {
 
-    @Value("${wndtback.app.secret}")
+    @Value("${fastrep.app.secret}")
     private String secret;
-    @Value("${wndtback.app.lifetime}")
+    @Value("${fastrep.app.lifetime}")
     private int lifetime;
 
     public String generateToken(Authentication authentication) {

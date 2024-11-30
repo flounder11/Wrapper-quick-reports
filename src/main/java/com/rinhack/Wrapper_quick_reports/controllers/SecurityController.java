@@ -1,11 +1,11 @@
 package com.rinhack.Wrapper_quick_reports.controllers;
 
-import com.wndtback.models.SigninRequest;
-import com.wndtback.models.SignupRequest;
-import com.wndtback.models.User;
-import com.wndtback.repositories.UserRepository;
-import com.wndtback.security.JwtCore;
-import com.wndtback.security.SecurityConfig;
+
+import com.rinhack.Wrapper_quick_reports.models.SigninRequest;
+import com.rinhack.Wrapper_quick_reports.models.SignupRequest;
+import com.rinhack.Wrapper_quick_reports.models.User;
+import com.rinhack.Wrapper_quick_reports.repositories.UserRepository;
+import com.rinhack.Wrapper_quick_reports.security.JwtCore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

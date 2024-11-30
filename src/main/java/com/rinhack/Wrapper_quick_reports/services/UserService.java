@@ -1,8 +1,8 @@
-package com.wndtback.services;
+package com.rinhack.Wrapper_quick_reports.services;
 
-import com.wndtback.models.User;
-import com.wndtback.models.UserDetailsImpl;
-import com.wndtback.repositories.UserRepository;
+import com.rinhack.Wrapper_quick_reports.models.User;
+import com.rinhack.Wrapper_quick_reports.models.UserDetailsImpl;
+import com.rinhack.Wrapper_quick_reports.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

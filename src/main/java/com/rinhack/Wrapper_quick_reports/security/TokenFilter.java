@@ -1,4 +1,5 @@
 package com.rinhack.Wrapper_quick_reports.security;
+
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.persistence.Column;
 import jakarta.servlet.FilterChain;

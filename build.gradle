@@ -22,6 +22,10 @@ dependencies {
 	implementation 'org.projectlombok:lombok'
 	compileOnly 'org.projectlombok:lombok:1.18.36'
 	annotationProcessor 'org.projectlombok:lombok:1.18.36'
+	runtimeOnly 'org.postgresql:postgresql'
+	implementation 'org.hibernate:hibernate-core:6.0.0.Final'
+	implementation 'org.postgresql:postgresql:42.7.1'
+	runtimeOnly 'org.postgresql:postgresql'
 
 	testCompileOnly 'org.projectlombok:lombok:1.18.36'
 	testAnnotationProcessor 'org.projectlombok:lombok:1.18.36'

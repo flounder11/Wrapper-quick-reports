@@ -1,5 +1,6 @@
 package com.rinhack.Wrapper_quick_reports.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -8,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,42 +22,25 @@ public class TemplatesController {
     private String baseUrl; // Базовый URL облака, задаётся в application.properties
 
     private final RestTemplate restTemplate;
-
+    @Autowired
     public TemplatesController(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
-    /**
-     * Получение корневой папки
-     */
-    @GetMapping("/root")
-    public ResponseEntity<String> getRootFolder(@RequestParam(required = false) String subscriptionId) {
-        String url = baseUrl + "/Templates/Root";
-        if (subscriptionId != null) {
-            url += "?subscriptionId=" + subscriptionId;
-        }
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("accept", "text/plain");
-
-        HttpEntity<Void> request = new HttpEntity<>(headers);
-        ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, request, String.class);
-        return response;
-    }
 
     /**
      * Загрузка .frx файла в облако с использованием Base64
      */
-    @PostMapping("/folder/{folderId}/file")
-    public ResponseEntity<Map<String, Object>> uploadTemplateWithBase64(
-            @PathVariable String folderId,
+    @PostMapping("/file")
+    public ResponseEntity<Map<String, Object>> uploadTemplateToRoot(
             @RequestParam("file") MultipartFile file) {
         try {
             // Преобразуем содержимое файла в Base64
-            String base64Content = Base64Utils.encodeToString(file.getBytes());
+            String base64Content = Base64.getEncoder().encodeToString(file.getBytes());
 
-            // Формируем запрос
-            String url = baseUrl + "/Templates/Folder/" + folderId + "/File";
+            // Формируем URL для корневой папки
+            String url = baseUrl + "/Templates/Root/File";
+
             HttpHeaders headers = new HttpHeaders();
             headers.set("accept", "text/plain");
             headers.set("Content-Type", "application/json-patch+json");
@@ -79,4 +64,5 @@ public class TemplatesController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
+
 }

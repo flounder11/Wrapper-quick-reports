@@ -1,6 +1,5 @@
 package com.rinhack.Wrapper_quick_reports.controllers;
 
-
 import com.rinhack.Wrapper_quick_reports.models.SigninRequest;
 import com.rinhack.Wrapper_quick_reports.models.SignupRequest;
 import com.rinhack.Wrapper_quick_reports.models.User;

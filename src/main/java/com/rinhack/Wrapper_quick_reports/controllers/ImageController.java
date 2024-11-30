@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -49,7 +48,7 @@ public class ImageController {
 
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
 
@@ -81,7 +80,12 @@ public class ImageController {
 
         // Устанавливаем цвет фона
         graphics.setColor(Color.WHITE);
-        graphics.fillRect(0, 0, width, height);
+        try{
+            graphics.fillRect(0, 0, width, height);
+        } catch (Exception e){
+            throw new IOException(e.getMessage());
+        }
+
 
         // Размер одной ячейки
         int cellWidth = width / columns;
@@ -90,8 +94,13 @@ public class ImageController {
         int rows = height / cellHeight;
 
         // Устанавливаем цвет границ
-        Color borderColor = Color.decode(borderColorHex);
-
+        Color borderColor = null;
+        try {
+            borderColor = Color.decode(borderColorHex);
+        }
+        catch (Exception e) {
+            throw new IOException(e);
+        }
         // Заполнение холста узором
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < columns; col++) {

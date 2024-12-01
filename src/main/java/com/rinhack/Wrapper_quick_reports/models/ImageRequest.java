@@ -16,6 +16,4 @@ public class ImageRequest {
     private String borderColor;  // Цвет границы (HEX)
     private boolean shuffle;     // Перемешивать изображения
     private int columns;         // Количество колонок
-
-
 }

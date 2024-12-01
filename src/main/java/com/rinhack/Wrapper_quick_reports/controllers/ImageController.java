@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -29,13 +28,12 @@ import java.util.zip.ZipOutputStream;
 @RequestMapping("/api/v1/images")
 public class ImageController {
     @Value("${fastrep.app.apitok}")
-    private String apitok;
+    protected static String apitok;
     @PostMapping(value = "/generate", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<byte[]> generateFiles(@RequestBody ImageRequest request) {
         if (request.getImages() == null || request.getImages().isEmpty()) {
             return ResponseEntity.badRequest().body(null);
         }
-
         try {
             // Генерируем изображение
             byte[] imageFile = generateImageFile(
@@ -255,7 +253,6 @@ public class ImageController {
             // Преобразуем строку в байты и возвращаем
             return frxContent.toString().getBytes();
         }
-
         private BufferedImage getDecodedImage(String base64Image) {
             try {
                 byte[] decodedBytes = Base64.getDecoder().decode(base64Image);
@@ -296,39 +293,38 @@ public class ImageController {
             return null;
         }
     }
-
-
-    private void postToFastReportTemplates(String filename, String encodedContent) {
-            try {
-        // Создаем тело запроса
-        String requestBody = String.format("""
+    public static void postToFastReportTemplates(String filename, String encodedContent) {
+        try {
+            // Создаем тело запроса
+            String requestBody = String.format("""
                 {
                   "name": "%s",
                   "content": "%s"
                 }
             """,filename, encodedContent);
 
-        // Создаем HTTP клиент
-        HttpClient client = HttpClient.newHttpClient();
+            // Создаем HTTP клиент
+            HttpClient client = HttpClient.newHttpClient();
 
-        // Создаем HTTP запрос
-                java.net.http.HttpRequest request = java.net.http.HttpRequest.newBuilder()
-                .uri(URI.create("https://hygieia.fast-report.com/api/rp/v1/Templates/Folder/674986111d6ee7f62ddcd20e/File"))
-                .header("accept", "text/plain")
-                .header("Content-Type", "application/json-patch+json")
-                .header("Authorization", "Basic " + Base64.getEncoder().encodeToString(String.format("apikey:%s", apitok).getBytes()))
-                .POST(java.net.http.HttpRequest.BodyPublishers.ofString(requestBody))
-                .build();
+            // Создаем HTTP запрос
+            java.net.http.HttpRequest request = java.net.http.HttpRequest.newBuilder()
+                    .uri(URI.create("https://hygieia.fast-report.com/api/rp/v1/Templates/Folder/674986111d6ee7f62ddcd20e/File"))
+                    .header("accept", "text/plain")
+                    .header("Content-Type", "application/json-patch+json")
+                    .header("Authorization", "Basic " + Base64.getEncoder().encodeToString(String.format("apikey:%s", apitok).getBytes()))
+                    .POST(java.net.http.HttpRequest.BodyPublishers.ofString(requestBody))
+                    .build();
 
-        // Отправляем запрос и получаем ответ
-        HttpResponse<String> response = client.send((java.net.http.HttpRequest) request, HttpResponse.BodyHandlers.ofString());
+            // Отправляем запрос и получаем ответ
+            HttpResponse<String> response = client.send((java.net.http.HttpRequest) request, HttpResponse.BodyHandlers.ofString());
 
-        // Печатаем результат
-        System.out.println("Response status code: " + response.statusCode());
-        System.out.println("Response body: " + response.body());
-    } catch (Exception e) {
-        e.printStackTrace();
+            // Печатаем результат
+            System.out.println("Response status code: " + response.statusCode());
+            System.out.println("Response body: " + response.body());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
-}
 }
 

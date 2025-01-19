@@ -15,14 +15,15 @@ public class PatternInitializer {
     private List<Pattern> patterns;
     static int count = 0;
 
-    public void initialize() {
+    public void initialize() throws IOException {
 
-
+        String currentPath = new java.io.File(".").getCanonicalPath();
+        log.info("Current dir:" + currentPath);
         List<String> images = List.of(
-                imageto64("/home/siderea/SpringBoot/Wrapper-quick-reports/src/main/resources/static/background1.jpg"),
-                imageto64("/home/siderea/SpringBoot/Wrapper-quick-reports/src/main/resources/static/background1.jpg"),
+                imageto64("/app/static/background1.jpg"),
+                imageto64("/app/static/background1.jpg"),
 
-                imageto64("/home/siderea/SpringBoot/Wrapper-quick-reports/src/main/resources/static/background1.jpg")
+                imageto64("/app/static/background1.jpg")
         );
 
         Pattern packNewYearPattern = new Pattern(
@@ -43,12 +44,9 @@ public class PatternInitializer {
     }
 
     public String imageto64(String filePath) {
-        // Путь к файлу в папке ресурсов
 
         try {
-            // Преобразуем файл в Base64
             String base64Encoded = encodeFileToBase64(filePath);
-            // Вывод результата
             return base64Encoded;
         } catch (IOException e) {
             System.err.println("Ошибка при обработке файла: " + e.getMessage());
@@ -63,7 +61,6 @@ private static String encodeFileToBase64(String filePath) throws IOException {
         if (bytesRead != file.length()) {
             throw new IOException("Не удалось считать весь файл");
         }
-        // Кодируем в Base64
             return Base64.getEncoder().encodeToString(fileBytes);
         }
     }

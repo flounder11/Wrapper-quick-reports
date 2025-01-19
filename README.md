@@ -1,5 +1,5 @@
 Требования для запуска: Docker, docker-compose
-Интерфейс:
+
 Демонстрация:
 
 https://github.com/user-attachments/assets/f10f8554-35ad-4dbf-9844-a793d38ad1c6
